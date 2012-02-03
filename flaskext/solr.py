@@ -1,3 +1,5 @@
+"Fully expose pysolr API to a Flask instance."
+
 import pysolr
 
 
@@ -27,13 +29,15 @@ class Solr(object):
     def init_app(self, app):
         self.app = app
         self.app.config.setdefault('SOLR_URL', 'http://localhost:8983/solr')
+        # Decoder and timeout defaults taken directly from pysolr.
         self.app.config.setdefault('SOLR_DECODER', json.JSONDecoder())
         self.app.config.setdefault('SOLR_TIMEOUT', 60)
         if not hasattr(app, 'extensions'):
             app.extensions = {}
-        app.extensions[EXTENSION_KEY] = self.connect()
+        app.extensions[EXTENSION_KEY] = self.create_connector()
 
-    def connect(self):
+    def create_connector(self):
+        # pysolr.Solr does not connect over HTTP until needed for operations.
         url = self.app.config['SOLR_URL']
         decoder = self.app.config['SOLR_DECODER']
         timeout = self.app.config['SOLR_TIMEOUT']
