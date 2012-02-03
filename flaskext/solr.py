@@ -3,15 +3,6 @@
 import pysolr
 
 
-# json logic from pysolr, to expose pysolr.Solr constructor API in Flask-Solr.
-try:
-    # For Python < 2.6 or people using a newer version of simplejson
-    import simplejson as json
-except ImportError:
-    # For Python >= 2.6
-    import json
-
-
 EXTENSION_KEY = 'solr'
 
 
@@ -30,7 +21,7 @@ class Solr(object):
         self.app = app
         self.app.config.setdefault('SOLR_URL', 'http://localhost:8983/solr')
         # Decoder and timeout defaults taken directly from pysolr.
-        self.app.config.setdefault('SOLR_DECODER', json.JSONDecoder())
+        self.app.config.setdefault('SOLR_DECODER', None)
         self.app.config.setdefault('SOLR_TIMEOUT', 60)
         if not hasattr(app, 'extensions'):
             app.extensions = {}
